@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#0f111a"/>
+  <circle cx="64" cy="64" r="44" fill="none" stroke="#22d3ee" stroke-width="6" opacity="0.4"/>
+  <circle cx="64" cy="64" r="32" fill="none" stroke="#06b6d4" stroke-width="4" opacity="0.7"/>
+  <!-- Isometric Pulse Diamond -->
+  <polygon points="64,28 98,64 64,100 30,64" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Energy Core -->
+  <polygon points="64,44 84,64 64,84 44,64" fill="#0284c7"/>
+  <circle cx="64" cy="64" r="8" fill="#f0fdf4"/>
+</svg>

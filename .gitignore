@@ -1,0 +1,15 @@
+# Godot 4 .gitignore
+.godot/
+*.translation
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Exported binaries
+/build/
+/export/
+
+# Mobile keystores and signing credentials
+*.keystore
+*.jks

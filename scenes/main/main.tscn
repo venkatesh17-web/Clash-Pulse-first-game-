@@ -1,0 +1,278 @@
+[gd_scene load_steps=5 format=3 uid="uid://pulseclashmain01"]
+
+[ext_resource type="Script" path="res://scenes/main/main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://pulseclasharena01" path="res://scenes/game/arena.tscn" id="2_arena"]
+[ext_resource type="PackedScene" uid="uid://pulseclashplayer01" path="res://scenes/entities/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scripts/game/gameplay_manager.gd" id="4_gameplay"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0470588, 0.054902, 0.0862745, 1)
+
+[node name="IsometricWorldPlaceholder" type="Node2D" parent="."]
+y_sort_enabled = true
+position = Vector2(360, 640)
+
+[node name="Arena" parent="IsometricWorldPlaceholder" instance=ExtResource("2_arena")]
+z_index = -1
+
+[node name="Player" parent="IsometricWorldPlaceholder" instance=ExtResource("3_player")]
+y_sort_enabled = true
+
+[node name="GameplayManager" type="Node2D" parent="IsometricWorldPlaceholder"]
+y_sort_enabled = true
+script = ExtResource("4_gameplay")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleMenu" type="VBoxContainer" parent="UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -240.0
+offset_right = 280.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="UI/TitleMenu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 46
+text = "PULSE CLASH"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="UI/TitleMenu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "2D ISOMETRIC ARCADE SURVIVAL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InstructionsLabel" type="Label" parent="UI/TitleMenu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "• DRAG anywhere to glide & move
+• COLLECT Golden Shards (+10 pts)
+• AVOID Red Pursuer Enemies
+• TAP PULSE to Shockwave & Magnetize"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="UI/TitleMenu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "HIGH SCORE: 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="UI/TitleMenu"]
+custom_minimum_size = Vector2(280, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "TAP TO START"
+
+[node name="InGameHUD" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuButton" type="Button" parent="UI/InGameHUD"]
+custom_minimum_size = Vector2(90, 44)
+layout_mode = 1
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 114.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 16
+text = "MENU"
+
+[node name="ScoreLabel" type="Label" parent="UI/InGameHUD"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 24.0
+offset_right = 160.0
+offset_bottom = 64.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 32
+text = "SCORE: 0"
+horizontal_alignment = 1
+
+[node name="TimerLabel" type="Label" parent="UI/InGameHUD"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 68.0
+offset_right = 120.0
+offset_bottom = 98.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "TIME: 00:00"
+horizontal_alignment = 1
+
+[node name="WaveLabel" type="Label" parent="UI/InGameHUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 28.0
+offset_right = -24.0
+offset_bottom = 60.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.35, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "CHASERS: 1/8"
+horizontal_alignment = 2
+
+[node name="PulseButton" type="Button" parent="UI/InGameHUD"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -140.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.1, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "PULSE"
+
+[node name="GameOverOverlay" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="UI/GameOverOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.04, 0.08, 0.88)
+
+[node name="Card" type="VBoxContainer" parent="UI/GameOverOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -200.0
+offset_right = 220.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="UI/GameOverOverlay/Card"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.3, 1)
+theme_override_font_sizes/font_size = 40
+text = "CORE CRITICAL"
+horizontal_alignment = 1
+
+[node name="FinalScoreLabel" type="Label" parent="UI/GameOverOverlay/Card"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 26
+text = "FINAL SCORE: 0"
+horizontal_alignment = 1
+
+[node name="BestScoreLabel" type="Label" parent="UI/GameOverOverlay/Card"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "BEST SCORE: 0"
+horizontal_alignment = 1
+
+[node name="TimeSurvivedLabel" type="Label" parent="UI/GameOverOverlay/Card"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 18
+text = "SURVIVED: 00:00"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="UI/GameOverOverlay/Card"]
+custom_minimum_size = Vector2(240, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 22
+text = "PLAY AGAIN"
+
+[node name="GameOverMenuButton" type="Button" parent="UI/GameOverOverlay/Card"]
+custom_minimum_size = Vector2(240, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "MAIN MENU"
+
+[node name="StatusLabel" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 15
+text = "Offline-First • 60 FPS"
+horizontal_alignment = 1
+vertical_alignment = 1
