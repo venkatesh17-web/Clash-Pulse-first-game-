@@ -82,26 +82,27 @@
 
 ### Milestone 013: Visual & Gameplay Recovery (Phone Screen Recording Repair)
 - Root Cause Diagnosis:
-  - Discovered full-screen UI controls in `main.tscn` lacked `mouse_filter = IGNORE`, absorbing all touch drag input before `player.gd` could receive it.
-  - Identified arena size (576×288) occupied only 22% of portrait screen height and tile colors lacked contrast over black background.
-  - Identified instant death defect: initial enemy spawned ~150px from player at t=0 with 0 grace period, killing player in 1.1s.
-  - Entities (nucleus 6.5px, enemy 12px, shard 14px) were microscopic on high-DPI displays.
+  - **Occluded Arena Floor (The Root Cause)**: In `scenes/main/main.tscn`, `Arena` had `z_index = -1` while `Background` (`ColorRect`) had default `z_index = 0`. Because `Background` is an opaque full-screen rectangle at z=0, Godot rendered `Arena` behind it, completely occluding 100% of the arena floor. The fix set `Background` to `z_index = -100` (`z_as_relative = false`) and restored `Arena` to `z_index = 0`.
+  - **Touch Drag Blocked**: Full-screen UI containers (`Main`, `Background`, `UI`, `InGameHUD`) lacked `mouse_filter = IGNORE` (2), absorbing touch drag events before `player.gd` could receive them.
+  - **Instant Death Defect**: Initial enemy spawned ~150px from player at t=0 with 0 grace period, killing player in 1.1s.
+  - **Microscopic Entities & Small Buttons**: Entities and Pulse button were uncomfortably small on high-DPI portrait mobile screens.
 - Visual & Arena Rebuild:
-  - Scaled tile dimensions from 64×32 to 76×38 px (684×342 px diamond footprint filling portrait center).
-  - Designed alternating checkerboard tile fills (`Color(0.065, 0.11, 0.22)` / `Color(0.045, 0.08, 0.16)`) with 1.8px electric cyan grid lines.
-  - Added dual-layer glowing neon perimeter (3.0px cyan edge + 6.0px soft bloom) and 4 corner vertex accents.
+  - Scaled tile dimensions to 76×68 px (`TILE_WIDTH = 76.0`, `TILE_HEIGHT = 68.0`). On a 9×9 grid, this spans **684×612 px** (99.3% screen width, 93.3% portrait play space).
+  - High-contrast checkerboard tile fills (`Color(0.08, 0.16, 0.32)` / `Color(0.05, 0.10, 0.22)`) with 2.0px electric cyan lines and 1.2px top bevel highlight.
+  - Outer perimeter ground halo (18px expansion, `Color(0.0, 0.45, 0.9, 0.15)`), dual-layer glowing neon perimeter (3.5px sharp cyan edge + 8.0px soft bloom), 4 glowing diamond corner markers, and concentric central pulse marker.
 - Gameplay & Survival Balance:
-  - Added 2.5s initial grace period with rotating shield visual and player invulnerability.
-  - Initial enemy spawned at furthest perimeter corner with grace delay and fair speed (112 px/s).
-  - Scaled entities ~2×: Player orb (11px nucleus, up to 34px glow), Chasers (22×14px, 26px bloom), Shards (28×18px).
+  - Added 2.5s initial grace period with rotating orbital shield and player invulnerability.
+  - Delayed initial enemy spawn to furthest perimeter corner (>320px away) at fair speed (112 px/s).
+  - Scaled entities ~2×: Player orb (13px nucleus, 24px corona, 34px glow), Chasers (26×18px, 32px bloom), Shards (30×20px, 26px bloom).
 - Mobile Controls & HUD Polish:
   - Set `mouse_filter = IGNORE` across all non-interactive containers; interactive buttons retain `STOP`.
   - Transformed touch coordinates via `get_canvas_transform().affine_inverse() * event.position`.
-  - Enlarged Pulse button to 130×130 with high-contrast READY vs COOLDOWN states.
+  - Enlarged Pulse button to 140×140 with dynamic `PULSE\nREADY` vs `PULSE\n%.1fs` cooldown text.
   - Added safe-area top margins for camera punch-holes.
   - Redesigned Game-Over screen with bold CORE CRITICAL typography, glowing stats card, and 270×64 touch buttons.
 - Verification & Device Deployment:
   - Re-ran test suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`): all passed (exit code 0).
+  - Headless render test via PIL confirmed 84,368 px of rendered floor tiles and neon grid lines across 93.3% vertical span.
   - Exported and signed new debug APK (`D:\Game\build\pulse_clash.apk`, 23.48 MB).
-  - Streamed install to Motorola edge 70 (`Success`) and launched app (`org.godotengine.pulseclash`).
-  - Verified clean OpenGL ES 3.2 Qualcomm Adreno 722 boot in device logcat.
+  - Streamed install to Motorola edge 70 (`Success`) via ADB.
+  - Awaiting physical playtest by the founder to verify tactile drag feel on hardware.

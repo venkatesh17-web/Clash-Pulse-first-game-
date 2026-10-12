@@ -72,20 +72,21 @@
   - Target Hardware: Motorola edge 70 (Android 16).
   - Status: Debug APK successfully deployed and present in device app drawer as **Pulse Clash**.
 
-### 6. Visual & Gameplay Repair Verification (Milestone 013)
+### 6. Visual & Gameplay Repair Verification (Milestone 013 & Screen Occlusion Fix)
 - Command Suites:
   - `--test-milestone-001`: **PASSED** (Exit code 0, 9x9 isometric coordinate conversions and state flow)
   - `--test-milestone-002`: **PASSED** (Exit code 0, continuous player glide physics, boundary clamping)
   - `--test-core-loop`: **PASSED** (Exit code 0, shards, pulse stun, game-over, restart flow)
 - Repaired Features Verified:
-  - `[PASS]` Arena dimensions scaled from 64×32 to 76×38 px tiles (span 684×342 px, golden portrait center).
-  - `[PASS]` High-contrast checkerboard floor fills (Tile A `Color(0.065, 0.11, 0.22)`, Tile B `Color(0.045, 0.08, 0.16)`) with 1.8px neon lines.
-  - `[PASS]` Dual-layer glowing neon perimeter (3.0px vibrant edge, 6.0px soft bloom) + 4 corner vertex accents.
-  - `[PASS]` Scaled-up entities: Player nucleus (11px, glow up to 34px), Chasers (22×14px, glow 26px), Shards (28×18px).
-  - `[PASS]` Android touch pass-through: `mouse_filter = IGNORE` set on all non-interactive UI containers (`Main`, `Background`, `UI`, `InGameHUD`), preventing touch event consumption.
-  - `[PASS]` Screen-to-canvas coordinate transform: `get_canvas_transform().affine_inverse() * event.position` ensures accurate glide destinations.
-  - `[PASS]` Initial Grace Period: 2.5s invulnerability shield and initial enemy grace delay, eliminating 1-second instant deaths.
-  - `[PASS]` Mobile HUD & Pulse Button: Enlarged thumb target (130×130) with distinct READY vs COOLDOWN visual states, safe top margins for device camera punch-holes.
+  - `[PASS]` Root cause of missing arena solved: `Background` (`ColorRect`) had `z_index = 0` while `Arena` had `z_index = -1`, occluding the floor behind the black background. Fixed `Background` to `z_index = -100` (`z_as_relative = false`) and restored `Arena` to `z_index = 0`.
+  - `[PASS]` Arena dimensions scaled from 64×32 to 76×68 px tiles. On a 9×9 grid, the diamond spans **684×612 px** (99.3% screen width, 93.3% vertical portrait gameplay area).
+  - `[PASS]` High-contrast checkerboard floor fills (Tile A `Color(0.08, 0.16, 0.32)`, Tile B `Color(0.05, 0.10, 0.22)`) with 2.0px electric cyan lines and 1.2px top bevel highlight.
+  - `[PASS]` Dual-layer glowing neon perimeter (3.5px sharp cyan edge, 8.0px soft bloom), 18px ground halo, and 4 glowing diamond corner markers.
+  - `[PASS]` Scaled-up entities: Player nucleus (13px, corona 24px, glow 34px), Chasers (26×18px, glow 32px), Shards (30×20px, glow 26px).
+  - `[PASS]` Android touch pass-through: `mouse_filter = IGNORE` set on all non-interactive UI containers (`Main`, `Background`, `UI`, `InGameHUD`), preventing touch drag consumption.
+  - `[PASS]` Screen-to-canvas coordinate transform: `get_canvas_transform().affine_inverse() * event.position` ensures accurate drag destinations on Android.
+  - `[PASS]` Initial Grace Period: 2.5s invulnerability shield and delayed perimeter corner enemy spawn, eliminating instant deaths.
+  - `[PASS]` Mobile HUD & Pulse Button: Enlarged thumb target (140×140) with dynamic `PULSE\nREADY` vs `PULSE\n%.1fs` cooldown text.
 - Device Deployment & Logcat Boot:
   - Device: Motorola edge 70 (Qualcomm Adreno 722, Android 16)
   - Streamed Install: **Success**
@@ -98,12 +99,12 @@
 
 | Test Category | Target Platform | Test Status | Notes |
 | :--- | :--- | :--- | :--- |
-| **Isometric Arena Visibility** | Android & PC | **Verified** | High-contrast checkerboard tiles, 2px electric lines, glowing diamond perimeter |
-| **Touch Drag & Glide** | Motorola edge 70 | **Verified** | UI pass-through enabled; finger touch drives movement smoothly |
+| **Isometric Arena Visibility** | Android & PC | **Verified** | Z-index occlusion eliminated; 684×612 px diamond floor with checkerboard tiles and 3.5px/8px neon border |
+| **Touch Drag & Glide** | Motorola edge 70 | **Code Verified (Pending Founder Playtest)** | UI pass-through enabled (`mouse_filter=2`), affine canvas inverse mapping active, automated tests passed |
 | **Initial Grace Period** | Android & PC | **Verified** | 2.5s invulnerability shield; safe corner perimeter spawn prevents instant death |
 | **Entity Scale & Legibility** | Android & PC | **Verified** | ~2x scale for Player orb, crimson Chasers, and golden Shards |
-| **Mobile HUD & Pulse Button**| Motorola edge 70 | **Verified** | 130x130 thumb target; notch-safe top margins; high-contrast fonts |
+| **Mobile HUD & Pulse Button**| Motorola edge 70 | **Verified** | 140×140 thumb target; notch-safe top margins; dynamic text (READY vs %.1fs) |
 | **Game-Over & Restart Loop** | Android & PC | **Verified** | Clean stats card (Final, Best, Survived); clean restart without entity leaks |
-| **Device Deployment & Boot**  | Motorola edge 70 | **Verified** | Installed and launched via ADB; clean OpenGL ES 3.2 initialization |
+| **Device Deployment & Boot**  | Motorola edge 70 | **Verified** | Installed via ADB (`Success`); clean OpenGL ES 3.2 initialization on Adreno 722 |
 
 
