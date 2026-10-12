@@ -1,10 +1,10 @@
 class_name IsometricHelper
 extends RefCounted
 
-## Utility class for 2D Isometric projections (2:1 standard isometric ratio)
+## Utility class for 2D Diamond Isometric projections scaled for portrait mobile screens
 
 const TILE_WIDTH: float = 76.0
-const TILE_HEIGHT: float = 38.0
+const TILE_HEIGHT: float = 68.0
 
 
 ## Converts 2D cartesian grid coordinates into 2D isometric screen space coordinates

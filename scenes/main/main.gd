@@ -150,11 +150,11 @@ func _on_pulse_button_pressed() -> void:
 func _on_pulse_cooldown_tick(remaining: float, _total: float) -> void:
 	if remaining <= 0.0:
 		pulse_button.disabled = false
-		pulse_button.text = "PULSE"
+		pulse_button.text = "PULSE\nREADY"
 		pulse_button.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	else:
 		pulse_button.disabled = true
-		pulse_button.text = "%.1fs" % remaining
+		pulse_button.text = "PULSE\n%.1fs" % remaining
 		pulse_button.modulate = Color(0.65, 0.75, 0.85, 0.65)
 
 
