@@ -47,6 +47,28 @@
 - Command: `& 'D:\Tools\Godot\Godot_v4.3-stable_win64_console.exe' --path 'd:\Game' --headless --quit-after 60`
 - **Result:** PASSED (Exit code 0, clean launch and 60-frame run without errors)
 
+### 5. Android Debug APK Export & Validation
+- Command: `& 'D:\Tools\Godot\Godot_v4.3-stable_win64_console.exe' --headless --path 'D:\Game' --export-debug "Android" 'D:\Game\build\pulse_clash.apk'`
+- **Result:** PASSED (Exit code 0)
+- **Artifact:** `D:\Game\build\pulse_clash.apk`
+- **Binary Size:** 23.48 MB (24,619,975 bytes)
+- **AAPT Package Inspection:**
+  - Package Name: `org.godotengine.pulseclash`
+  - Version: Code 1, Name 1.0.0
+  - Min SDK / Target SDK: `21` / `34` (Android 14)
+  - Architecture ABI: `arm64-v8a`
+  - Launchable Activity: `com.godot.game.GodotApp`
+  - Application Label: `Pulse Clash`
+- **Signature Verification (`apksigner verify --verbose`):**
+  - Result: `Verifies`
+  - Scheme v1 (JAR signing): `true`
+  - Scheme v2 (APK Signature Scheme v2): `true`
+  - Scheme v3 (APK Signature Scheme v3): `true`
+  - Signer: 1 (Debug keystore: `D:\Tools\AndroidSDK\debug.keystore`)
+- **ADB Physical Device Status:**
+  - `adb devices`: No physical devices currently attached/authorized.
+  - Device testing status: Physical on-device installation pending USB connection / side-loading. No device testing claimed.
+
 ---
 
 ## Manual & Environmental Testing Summary
@@ -58,5 +80,6 @@
 | **UI Touch Bleed-through** | Windows 11 PC | **Verified** | Clicking Pulse/Menu buttons does NOT trigger movement |
 | **Procedural Audio Output** | Windows 11 PC | **Verified** | 16-bit PCM synth buffers play with zero latency |
 | **Screenshake Decay** | Windows 11 PC | **Verified** | Linear decay without viewport clipping |
-| **Multi-touch Hardware** | Physical Android | **Pending** | Requires live Android phone deployment |
-| **APK Package Export** | Android OS | **Pending** | Requires Android SDK & export template download |
+| **Android Export Build** | Android OS | **Verified** | Debug APK built, signed, aligned, and verified (23.48 MB) |
+| **Multi-touch Hardware** | Physical Android | **Pending** | Requires live Android phone deployment (no device connected via ADB) |
+

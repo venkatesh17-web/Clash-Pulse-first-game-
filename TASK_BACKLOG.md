@@ -69,10 +69,15 @@
 - [PAS] Backward compatibility regression checks (`--test-milestone-001`, `--test-milestone-002`)
 - [PAS] Zero-dependency offline verification
 
-## Milestone 010: Android Preparation
+## Milestone 010: Android Preparation & APK Export
 - [PAS] Verified Java JDK 17 installed on system (`C:\Program Files\Eclipse Adoptium\jdk-17.0.19.10-hotspot\`)
-- [DOC] Documented Android SDK command line tools and export template requirements
-- [FND] Awaiting founder approval to download Android SDK build-tools (~400MB) & Godot Android template (~1.2GB)
+- [PAS] Installed Android SDK Command-line Tools (`adb`, `aapt`, `apksigner`, `zipalign`, `android-34`)
+- [PAS] Generated debug signing keystore (`D:\Tools\AndroidSDK\debug.keystore`)
+- [PAS] Installed Godot 4.3 official export templates in `%APPDATA%\Godot\export_templates\4.3.stable\`
+- [PAS] Configured Android export preset in `export_presets.cfg`
+- [PAS] Exported debug APK (`D:\Game\build\pulse_clash.apk`, 23.48 MB)
+- [PAS] Validated APK signature and manifest badging with `apksigner` and `aapt`
+- [DOC] Physical on-device deployment documented; ready for connection
 
 ## Milestone 011: Online Multiplayer Architecture
 - [DOC] Complete technical design specification (`MULTIPLAYER_DESIGN.md`)

@@ -57,9 +57,20 @@
 - Automated test suites executed via Godot 4.3 CLI (`--test-core-loop`, `--test-milestone-001`, `--test-milestone-002`).
 - All tests passed with exit code 0.
 
-### Milestone 010: Android Preparation Audit
-- Confirmed Java JDK 17 is already installed on Windows host (`C:\Program Files\Eclipse Adoptium\jdk-17.0.19.10-hotspot\`).
-- Identified missing tools: Android command-line SDK tools and Godot Android export template. Documented for founder approval.
+### Milestone 010: Android Export Pipeline & Debug APK Build
+- Confirmed Java JDK 17 on Windows host (`C:\Program Files\Eclipse Adoptium\jdk-17.0.19.10-hotspot\`).
+- Installed Android SDK Command-line Tools in `D:\Tools\AndroidSDK`:
+  - `platform-tools` (`adb.exe`)
+  - `build-tools/34.0.0` (`aapt.exe`, `apksigner.bat`, `zipalign.exe`)
+  - `platforms/android-34` (`android.jar`)
+- Generated standard debug keystore at `D:\Tools\AndroidSDK\debug.keystore` (alias: `androiddebugkey`, validity: 9999 days).
+- Verified and extracted official Godot 4.3 export templates archive (`templates.tpz`) to `%APPDATA%\Godot\export_templates\4.3.stable\`.
+- Resolved Godot 4.3 configuration lookup by linking SDK path and keystore directly in `%APPDATA%\Godot\editor_settings-4.3.tres`.
+- Configured Android export preset in `export_presets.cfg` (`arm64-v8a`, Target SDK 34, Min SDK 21, package `org.godotengine.pulseclash`, immersive mode, vibration enabled, zero network permissions).
+- Successfully exported signed, aligned Android debug package (`D:\Game\build\pulse_clash.apk`, 23.48 MB).
+- Validated cryptographic signature with `apksigner` (v1, v2, v3 verified).
+- Queried ADB for physical target devices (`adb devices`: none currently attached).
+
 
 ### Milestone 011: Online Multiplayer Architecture
 - Completed comprehensive technical design document (`MULTIPLAYER_DESIGN.md`).
