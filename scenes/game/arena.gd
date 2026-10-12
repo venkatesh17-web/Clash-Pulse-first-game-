@@ -40,6 +40,7 @@ func _calculate_center_offset() -> void:
 
 func _draw() -> void:
 	_draw_arena_ground_halo()
+	_draw_stage_plinth()
 	_draw_isometric_grid()
 	_draw_perimeter_boundary()
 	_draw_corner_nodes()
@@ -53,15 +54,47 @@ func _draw_arena_ground_halo() -> void:
 	var bottom_vertex := _grid_to_world_raw(Vector2(float(grid_size.x), float(grid_size.y)))
 	var left_vertex := _grid_to_world_raw(Vector2(0, float(grid_size.y)))
 
-	var outer_expansion := 18.0
+	var outer_expansion := 16.0
 	var halo_poly := PackedVector2Array([
 		top_vertex + Vector2(0, -outer_expansion),
 		right_vertex + Vector2(outer_expansion, 0),
 		bottom_vertex + Vector2(0, outer_expansion),
 		left_vertex + Vector2(-outer_expansion, 0)
 	])
-	var halo_color := Color(0.0, 0.45, 0.9, 0.15)
+	var halo_color := Color(0.0, 0.4, 0.8, 0.12)
 	draw_colored_polygon(halo_poly, halo_color)
+
+
+func _draw_stage_plinth() -> void:
+	# Subtle 3D floating isometric platform slab drop along bottom edges
+	var right_vertex := _grid_to_world_raw(Vector2(float(grid_size.x), 0))
+	var bottom_vertex := _grid_to_world_raw(Vector2(float(grid_size.x), float(grid_size.y)))
+	var left_vertex := _grid_to_world_raw(Vector2(0, float(grid_size.y)))
+
+	var depth := Vector2(0, 10.0)
+
+	# Left bottom plinth face
+	var left_plinth := PackedVector2Array([
+		left_vertex,
+		bottom_vertex,
+		bottom_vertex + depth,
+		left_vertex + depth
+	])
+	draw_colored_polygon(left_plinth, Color(0.025, 0.06, 0.14, 0.95))
+	draw_line(left_vertex + depth, bottom_vertex + depth, Color(0.1, 0.55, 0.75, 0.5), 1.5, true)
+
+	# Right bottom plinth face
+	var right_plinth := PackedVector2Array([
+		bottom_vertex,
+		right_vertex,
+		right_vertex + depth,
+		bottom_vertex + depth
+	])
+	draw_colored_polygon(right_plinth, Color(0.018, 0.045, 0.11, 0.95))
+	draw_line(bottom_vertex + depth, right_vertex + depth, Color(0.08, 0.45, 0.65, 0.5), 1.5, true)
+
+	# Front corner vertical spine
+	draw_line(bottom_vertex, bottom_vertex + depth, Color(0.15, 0.85, 1.0, 0.75), 2.0, true)
 
 
 func _draw_isometric_grid() -> void:
@@ -69,8 +102,14 @@ func _draw_isometric_grid() -> void:
 		for y in range(grid_size.y):
 			var corners := _get_tile_screen_corners(Vector2i(x, y))
 			
-			# High-contrast checkerboard tile fills
-			var fill_color := tile_color_a if (x + y) % 2 == 0 else tile_color_b
+			# High-contrast checkerboard tile fills with center nexus highlight
+			var is_nexus: bool = abs(x - 4) <= 1 and abs(y - 4) <= 1
+			var fill_color: Color
+			if is_nexus:
+				fill_color = Color(0.10, 0.20, 0.38, 1.0) if (x + y) % 2 == 0 else Color(0.07, 0.14, 0.28, 1.0)
+			else:
+				fill_color = tile_color_a if (x + y) % 2 == 0 else tile_color_b
+			
 			draw_polygon(corners, PackedColorArray([fill_color, fill_color, fill_color, fill_color]))
 
 			# Subtle top-facing tile bevel/highlight for tactile 3D tile feel
@@ -102,6 +141,15 @@ func _draw_perimeter_boundary() -> void:
 	dynamic_border.a = minf(1.0, 0.9 + sin(_pulse_time) * 0.1)
 	for i in range(4):
 		draw_line(boundary[i], boundary[(i + 1) % 4], dynamic_border, 3.5, true)
+
+	# Inner boundary inset line (4px inside) for crisp high-tech double perimeter
+	var inset_top := top_vertex + Vector2(0, 4)
+	var inset_right := right_vertex + Vector2(-4, 0)
+	var inset_bottom := bottom_vertex + Vector2(0, -4)
+	var inset_left := left_vertex + Vector2(4, 0)
+	var inner_boundary := PackedVector2Array([inset_top, inset_right, inset_bottom, inset_left])
+	for i in range(4):
+		draw_line(inner_boundary[i], inner_boundary[(i + 1) % 4], Color(0.1, 0.85, 1.0, 0.35), 1.2, true)
 
 
 func _draw_corner_nodes() -> void:

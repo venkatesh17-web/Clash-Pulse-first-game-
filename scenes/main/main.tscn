@@ -128,14 +128,14 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="MenuButton" type="Button" parent="UI/InGameHUD"]
-custom_minimum_size = Vector2(100, 48)
+custom_minimum_size = Vector2(110, 50)
 layout_mode = 1
 offset_left = 24.0
-offset_top = 48.0
-offset_right = 124.0
-offset_bottom = 96.0
+offset_top = 54.0
+offset_right = 134.0
+offset_bottom = 104.0
 mouse_filter = 0
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 20
 text = "MENU"
 
 [node name="ScoreLabel" type="Label" parent="UI/InGameHUD"]
@@ -144,15 +144,15 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -180.0
-offset_top = 42.0
+offset_top = 48.0
 offset_right = 180.0
-offset_bottom = 88.0
+offset_bottom = 102.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_shadow_color = Color(0.4, 0.3, 0, 0.6)
+theme_override_colors/font_shadow_color = Color(0.4, 0.3, 0, 0.7)
 theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 44
 text = "SCORE: 0"
 horizontal_alignment = 1
 
@@ -162,13 +162,13 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -140.0
-offset_top = 92.0
+offset_top = 104.0
 offset_right = 140.0
-offset_bottom = 126.0
+offset_bottom = 144.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.78, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 26
 text = "TIME: 00:00"
 horizontal_alignment = 1
 
@@ -177,34 +177,34 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -170.0
-offset_top = 52.0
+offset_left = -190.0
+offset_top = 58.0
 offset_right = -24.0
-offset_bottom = 88.0
+offset_bottom = 98.0
 grow_horizontal = 0
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.38, 0.48, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 22
 text = "CHASERS: 1/8"
 horizontal_alignment = 2
 
 [node name="PulseButton" type="Button" parent="UI/InGameHUD"]
-custom_minimum_size = Vector2(140, 140)
+custom_minimum_size = Vector2(150, 150)
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -180.0
+offset_left = -180.0
+offset_top = -190.0
 offset_right = -30.0
 offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 0
 theme_override_colors/font_color = Color(0.05, 0.96, 1, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "PULSE
 READY"
 

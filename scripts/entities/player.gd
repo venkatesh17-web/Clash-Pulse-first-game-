@@ -65,8 +65,6 @@ func _unhandled_input(event: InputEvent) -> void:
 				_update_destination_from_event(event.position)
 			else:
 				_is_dragging = false
-				# Stop smoothly near current position on finger/mouse release
-				target_position = position
 
 	elif event is InputEventMouseMotion:
 		if _is_dragging:
@@ -79,8 +77,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			_update_destination_from_event(event.position)
 		else:
 			_is_dragging = false
-			# Stop smoothly near current position on touch release
-			target_position = position
 
 	elif event is InputEventScreenDrag:
 		_is_dragging = true

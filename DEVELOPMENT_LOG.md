@@ -81,28 +81,16 @@
 - Offline game is complete, playable, and validated.
 
 ### Milestone 013: Visual & Gameplay Recovery (Phone Screen Recording Repair)
-- Root Cause Diagnosis:
-  - **Occluded Arena Floor (The Root Cause)**: In `scenes/main/main.tscn`, `Arena` had `z_index = -1` while `Background` (`ColorRect`) had default `z_index = 0`. Because `Background` is an opaque full-screen rectangle at z=0, Godot rendered `Arena` behind it, completely occluding 100% of the arena floor. The fix set `Background` to `z_index = -100` (`z_as_relative = false`) and restored `Arena` to `z_index = 0`.
-  - **Touch Drag Blocked**: Full-screen UI containers (`Main`, `Background`, `UI`, `InGameHUD`) lacked `mouse_filter = IGNORE` (2), absorbing touch drag events before `player.gd` could receive them.
-  - **Instant Death Defect**: Initial enemy spawned ~150px from player at t=0 with 0 grace period, killing player in 1.1s.
-  - **Microscopic Entities & Small Buttons**: Entities and Pulse button were uncomfortably small on high-DPI portrait mobile screens.
-- Visual & Arena Rebuild:
-  - Scaled tile dimensions to 76×68 px (`TILE_WIDTH = 76.0`, `TILE_HEIGHT = 68.0`). On a 9×9 grid, this spans **684×612 px** (99.3% screen width, 93.3% portrait play space).
-  - High-contrast checkerboard tile fills (`Color(0.08, 0.16, 0.32)` / `Color(0.05, 0.10, 0.22)`) with 2.0px electric cyan lines and 1.2px top bevel highlight.
-  - Outer perimeter ground halo (18px expansion, `Color(0.0, 0.45, 0.9, 0.15)`), dual-layer glowing neon perimeter (3.5px sharp cyan edge + 8.0px soft bloom), 4 glowing diamond corner markers, and concentric central pulse marker.
-- Gameplay & Survival Balance:
-  - Added 2.5s initial grace period with rotating orbital shield and player invulnerability.
-  - Delayed initial enemy spawn to furthest perimeter corner (>320px away) at fair speed (112 px/s).
-  - Scaled entities ~2×: Player orb (13px nucleus, 24px corona, 34px glow), Chasers (26×18px, 32px bloom), Shards (30×20px, 26px bloom).
-- Mobile Controls & HUD Polish:
-  - Set `mouse_filter = IGNORE` across all non-interactive containers; interactive buttons retain `STOP`.
-  - Transformed touch coordinates via `get_canvas_transform().affine_inverse() * event.position`.
-  - Enlarged Pulse button to 140×140 with dynamic `PULSE\nREADY` vs `PULSE\n%.1fs` cooldown text.
-  - Added safe-area top margins for camera punch-holes.
-  - Redesigned Game-Over screen with bold CORE CRITICAL typography, glowing stats card, and 270×64 touch buttons.
+- Root Cause Diagnosis & Fixes:
+  - **Occluded Arena Floor**: In `scenes/main/main.tscn`, `Arena` had `z_index = -1` while `Background` (`ColorRect`) had default `z_index = 0`. Fixed `Background` to `z_index = -100` (`z_as_relative = false`) and restored `Arena` to `z_index = 0`.
+  - **Touch Glide Interrupted on Release**: In `player.gd`, `target_position = position` on finger release was killing the selected destination prematurely. Removed destination wipe; tapping a destination now allows full glide travel, and dragging tracks smoothly before natural deceleration.
+  - **Screen-to-World Vertical Offset on 20:9 Screens**: `IsometricWorldPlaceholder` position was hardcoded at `(360, 640)`, causing a 160px vertical touch discrepancy on tall mobile displays. Added dynamic viewport centering (`get_viewport_rect().size * 0.5`) in `main.gd`.
+  - **7-Second Run Termination Balance**: Initial enemy count kept strictly at 1; initial grace period set to 2.0s with rotating orbital shield. Initial enemy spawns >300px away with 2.0s materialization warmup, and fair pursuit speed (105 px/s, acceleration 380 px/s²). Subsequent wave interval widened to 14.0s.
+  - **Collision & Stun Feedback**: Added `DeathBurst` particle core detonation VFX on player-enemy contact, white-hot hit flash, and camera screenshake (14.0). Stunned enemies now display rotating electric yellow/cyan stun arcs and wing lightning sparks while paralyzed.
+  - **Arena Presentation**: Added 10px 3D floating stage plinth along bottom perimeter edges, double-perimeter boundary inset line (4px inside), and center nexus platform tint.
+  - **Mobile HUD & Pulse Button**: Enlarge Score (font size 44), Timer (font size 26), and PulseButton (150×150 px thumb target) with high-contrast `PULSE\nREADY` vs `PULSE\n%.1fs`.
 - Verification & Device Deployment:
-  - Re-ran test suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`): all passed (exit code 0).
-  - Headless render test via PIL confirmed 84,368 px of rendered floor tiles and neon grid lines across 93.3% vertical span.
-  - Exported and signed new debug APK (`D:\Game\build\pulse_clash.apk`, 23.48 MB).
+  - Headless test suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`, `--test-milestone-013`): all passed with exit code 0.
+  - Exported and signed replacement Android debug APK (`D:\Game\build\pulse_clash.apk`, 24.63 MB, v1/v2/v3 verified).
   - Streamed install to Motorola edge 70 (`Success`) via ADB.
-  - Awaiting physical playtest by the founder to verify tactile drag feel on hardware.
+  - Launched app via monkey intent; logcat confirms clean initialization on Qualcomm Adreno 722.

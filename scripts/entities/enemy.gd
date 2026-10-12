@@ -7,10 +7,11 @@ extends CharacterBody2D
 signal hit_player
 
 @export var base_speed: float = 135.0
-@export var acceleration: float = 1200.0
+@export var acceleration: float = 420.0
 
 var is_stunned: bool = false
 var stun_timer: float = 0.0
+var spawn_warmup: float = 0.0
 var target_player: Node2D = null
 
 var _arena: Arena = null
@@ -33,6 +34,15 @@ func _find_arena() -> void:
 		_arena = get_tree().root.find_child("Arena", true, false) as Arena
 
 
+func start_spawn_warmup(duration: float) -> void:
+	spawn_warmup = duration
+	velocity = Vector2.ZERO
+	if visuals == null:
+		visuals = get_node_or_null("Visuals")
+	if visuals and visuals.has_method("set_spawning"):
+		visuals.set_spawning(true)
+
+
 func apply_stun(duration: float = 1.5) -> void:
 	is_stunned = true
 	stun_timer = duration
@@ -43,9 +53,25 @@ func apply_stun(duration: float = 1.5) -> void:
 		visuals.set_stunned(true)
 
 
+func trigger_hit_flash() -> void:
+	if visuals == null:
+		visuals = get_node_or_null("Visuals")
+	if visuals and visuals.has_method("trigger_hit_flash"):
+		visuals.trigger_hit_flash()
+
+
 func _physics_process(delta: float) -> void:
 	if GameManager.current_state != GameManager.State.PLAYING:
 		velocity = Vector2.ZERO
+		return
+
+	# Spawn warmup countdown (initial perimeter materialization)
+	if spawn_warmup > 0.0:
+		spawn_warmup -= delta
+		velocity = Vector2.ZERO
+		if spawn_warmup <= 0.0:
+			if visuals and visuals.has_method("set_spawning"):
+				visuals.set_spawning(false)
 		return
 
 	# Stun countdown
@@ -57,7 +83,7 @@ func _physics_process(delta: float) -> void:
 				visuals.set_stunned(false)
 		return
 
-	# Pursuit logic
+	# Pursuit logic with smooth inertia steering
 	if target_player != null and is_instance_valid(target_player):
 		var to_player := target_player.global_position - global_position
 		var dir := to_player.normalized()
@@ -75,7 +101,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_hit_area_body_entered(body: Node2D) -> void:
-	if is_stunned:
+	if is_stunned or spawn_warmup > 0.0:
 		return
 	if body is Player or body.name == "Player":
+		trigger_hit_flash()
 		hit_player.emit()

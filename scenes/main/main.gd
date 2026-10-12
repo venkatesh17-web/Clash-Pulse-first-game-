@@ -37,7 +37,15 @@ func trigger_screenshake(amount: float) -> void:
 	_shake_intensity = maxf(_shake_intensity, amount)
 
 
+func _update_world_centering() -> void:
+	var vp_size := get_viewport_rect().size
+	_original_world_pos = vp_size * 0.5
+	$IsometricWorldPlaceholder.position = _original_world_pos
+
+
 func _ready() -> void:
+	_update_world_centering()
+	get_viewport().size_changed.connect(_update_world_centering)
 	_update_ui()
 	_apply_state(GameManager.current_state)
 
@@ -67,6 +75,8 @@ func _ready() -> void:
 		_run_milestone_002_test()
 	elif OS.get_cmdline_user_args().has("--test-core-loop") or OS.has_environment("TEST_CORE_LOOP"):
 		_run_core_loop_test()
+	elif OS.get_cmdline_user_args().has("--test-milestone-013") or OS.has_environment("TEST_MILESTONE_013"):
+		_run_milestone_013_test()
 
 
 func _process(delta: float) -> void:
@@ -160,9 +170,11 @@ func _on_pulse_cooldown_tick(remaining: float, _total: float) -> void:
 
 func _on_grace_period_tick(remaining: float) -> void:
 	if remaining > 0.0:
-		status_label.text = "SHIELD ACTIVE (%.1fs) • GLIDE TO MOVE" % remaining
+		status_label.text = "CORE SHIELD ACTIVE (%.1fs) • DRAG TO GLIDE" % remaining
+		status_label.modulate = Color(0.2, 0.95, 1.0, 1.0)
 	elif GameManager.current_state == GameManager.State.PLAYING:
 		status_label.text = "Arena Active • Drag to Glide"
+		status_label.modulate = Color(0.7, 0.85, 1.0, 0.9)
 
 
 func _on_enemies_updated(active: int, max_count: int) -> void:
@@ -307,3 +319,74 @@ func _run_core_loop_test() -> void:
 
 	print("--- ALL CORE GAMEPLAY LOOP TESTS PASSED SUCCESSFULLY ---")
 	get_tree().quit(0)
+
+
+func _run_milestone_013_test() -> void:
+	print("--- BEGIN MILESTONE 013 VERIFICATION SUITE ---")
+	assert(gameplay_manager != null, "GameplayManager must exist")
+	assert(arena != null, "Arena must exist")
+	assert(player != null, "Player must exist")
+
+	# 1. Verify Dynamic World Centering
+	var vp_size: Vector2 = get_viewport_rect().size
+	var expected_center: Vector2 = vp_size * 0.5
+	assert($IsometricWorldPlaceholder.position == expected_center, "World must be centered at viewport center: %s vs %s" % [$IsometricWorldPlaceholder.position, expected_center])
+	print("[PASS] Dynamic viewport world centering verified: ", $IsometricWorldPlaceholder.position)
+
+	# 2. Verify Touch-to-World Coordinate Conversion at center and corners
+	var touch_center: Vector2 = expected_center
+	var world_center: Vector2 = $IsometricWorldPlaceholder.to_local(player.get_canvas_transform().affine_inverse() * touch_center)
+	assert(world_center.distance_to(Vector2.ZERO) < 0.01, "Center touch must map to (0, 0) world coord")
+	print("[PASS] Center screen touch maps exactly to (0, 0) world space")
+
+	var top_vertex_world: Vector2 = arena._grid_to_world_raw(Vector2(0, 0))
+	var top_vertex_screen: Vector2 = $IsometricWorldPlaceholder.to_global(top_vertex_world)
+	var mapped_top: Vector2 = $IsometricWorldPlaceholder.to_local(player.get_canvas_transform().affine_inverse() * top_vertex_screen)
+	assert(mapped_top.distance_to(top_vertex_world) < 0.01, "Top vertex touch round-trip mapping must match exactly")
+	print("[PASS] Arena perimeter coordinate conversion round-trip verified")
+
+	# 3. Start Run & Verify Grace Period & Initial Enemy Count
+	_on_start_button_pressed()
+	assert(gameplay_manager.is_run_active == true, "Run must be active")
+	assert(gameplay_manager.grace_time_remaining == 2.0, "Initial grace period must be exactly 2.0 seconds (got %f)" % gameplay_manager.grace_time_remaining)
+	assert(player.is_invulnerable == true, "Player must be invulnerable during grace period")
+	assert(gameplay_manager._enemies.size() == 1, "Must start with exactly 1 enemy (got %d)" % gameplay_manager._enemies.size())
+	print("[PASS] Starting enemy count verified: 1 enemy, 2.0s initial grace period")
+
+	# 4. Verify Initial Enemy Spawn Distance and Spawn Warmup
+	var enemy: Enemy = gameplay_manager._enemies[0]
+	var initial_dist: float = player.position.distance_to(enemy.position)
+	assert(initial_dist >= 270.0, "Enemy must spawn at least 270px away from player (got %f)" % initial_dist)
+	assert(enemy.spawn_warmup >= 1.9, "Enemy must have spawn warmup active during grace period")
+	assert(enemy.base_speed <= 110.0, "Enemy base speed must be fair (got %f)" % enemy.base_speed)
+	print("[PASS] Initial enemy distance (%f px) and warmup protection verified" % initial_dist)
+
+	# 5. Simulate 1.5s of Gameplay during Grace Period: Enemy Must Not Damage Player
+	for i in range(90): # 90 frames @ 60fps = 1.5s
+		gameplay_manager._physics_process(0.0166)
+		enemy._physics_process(0.0166)
+	assert(gameplay_manager.is_run_active == true, "Player must remain alive during grace period")
+	assert(gameplay_manager.grace_time_remaining > 0.0, "Grace period still counting down")
+	print("[PASS] Grace period survival verified over 1.5s simulation")
+
+	# 6. Verify Pulse Stun and Recovery
+	enemy.position = player.position + Vector2(60, 0)
+	var pulse_activated: bool = gameplay_manager.activate_pulse()
+	assert(pulse_activated == true, "Pulse must activate successfully")
+	assert(enemy.is_stunned == true, "Enemy must be stunned")
+	assert(gameplay_manager.pulse_cooldown_remaining > 0.0, "Pulse cooldown must be active")
+	print("[PASS] Pulse activation and enemy stun verified")
+
+	# 7. Verify Enemy Contact & Collision Burst
+	player.set_invulnerable(false)
+	gameplay_manager.grace_time_remaining = 0.0
+	enemy.is_stunned = false
+	enemy.spawn_warmup = 0.0
+	enemy.hit_player.emit()
+	assert(gameplay_manager.is_run_active == false, "Enemy contact must terminate run")
+	assert(GameManager.current_state == GameManager.State.GAME_OVER, "Must enter GAME_OVER state")
+	print("[PASS] Collision feedback and GAME_OVER transition verified")
+
+	print("--- ALL MILESTONE 013 TESTS PASSED SUCCESSFULLY ---")
+	get_tree().quit(0)
+

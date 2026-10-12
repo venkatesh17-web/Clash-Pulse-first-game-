@@ -72,25 +72,25 @@
   - Target Hardware: Motorola edge 70 (Android 16).
   - Status: Debug APK successfully deployed and present in device app drawer as **Pulse Clash**.
 
-### 6. Visual & Gameplay Repair Verification (Milestone 013 & Screen Occlusion Fix)
+### 6. Visual & Gameplay Repair Verification (Milestone 013)
 - Command Suites:
   - `--test-milestone-001`: **PASSED** (Exit code 0, 9x9 isometric coordinate conversions and state flow)
   - `--test-milestone-002`: **PASSED** (Exit code 0, continuous player glide physics, boundary clamping)
   - `--test-core-loop`: **PASSED** (Exit code 0, shards, pulse stun, game-over, restart flow)
-- Repaired Features Verified:
-  - `[PASS]` Root cause of missing arena solved: `Background` (`ColorRect`) had `z_index = 0` while `Arena` had `z_index = -1`, occluding the floor behind the black background. Fixed `Background` to `z_index = -100` (`z_as_relative = false`) and restored `Arena` to `z_index = 0`.
-  - `[PASS]` Arena dimensions scaled from 64×32 to 76×68 px tiles. On a 9×9 grid, the diamond spans **684×612 px** (99.3% screen width, 93.3% vertical portrait gameplay area).
-  - `[PASS]` High-contrast checkerboard floor fills (Tile A `Color(0.08, 0.16, 0.32)`, Tile B `Color(0.05, 0.10, 0.22)`) with 2.0px electric cyan lines and 1.2px top bevel highlight.
-  - `[PASS]` Dual-layer glowing neon perimeter (3.5px sharp cyan edge, 8.0px soft bloom), 18px ground halo, and 4 glowing diamond corner markers.
-  - `[PASS]` Scaled-up entities: Player nucleus (13px, corona 24px, glow 34px), Chasers (26×18px, glow 32px), Shards (30×20px, glow 26px).
-  - `[PASS]` Android touch pass-through: `mouse_filter = IGNORE` set on all non-interactive UI containers (`Main`, `Background`, `UI`, `InGameHUD`), preventing touch drag consumption.
-  - `[PASS]` Screen-to-canvas coordinate transform: `get_canvas_transform().affine_inverse() * event.position` ensures accurate drag destinations on Android.
-  - `[PASS]` Initial Grace Period: 2.5s invulnerability shield and delayed perimeter corner enemy spawn, eliminating instant deaths.
-  - `[PASS]` Mobile HUD & Pulse Button: Enlarged thumb target (140×140) with dynamic `PULSE\nREADY` vs `PULSE\n%.1fs` cooldown text.
+  - `--test-milestone-013`: **PASSED** (Exit code 0, world centering, touch mapping, 2.0s grace period, 1 starting enemy, collision feedback)
+- Repaired Defects & Root Causes:
+  - `[PASS]` **Touch Drag Cancellation Solved**: Removed `target_position = position` on finger release in `player.gd`. Tapping a destination now allows the orb to complete its glide, and dragging continuously tracks finger position before smooth halt.
+  - `[PASS]` **Screen-to-World Vertical Offset Solved**: Centered `IsometricWorldPlaceholder` dynamically at `get_viewport_rect().size * 0.5` in `main.gd`. Eliminates the 160px touch offset on tall 20:9 mobile displays (e.g., Motorola edge 70).
+  - `[PASS]` **Starting Enemy & Grace Period Tuning**: Initial enemy count set strictly to 1; initial grace period set to 2.0s with rotating orbital shield. Initial enemy spawns >300px away with 2.0s materialization warmup, and fair base speed (105 px/s, acceleration 380 px/s²). Subsequent wave interval widened to 14.0s.
+  - `[PASS]` **Clear Collision Feedback & Death Burst**: Created `DeathBurst` (`scenes/entities/death_burst.tscn`) core detonation effect with expanding shockwave and shattering energy particles, camera screenshake (14.0), and hit flash on contact.
+  - `[PASS]` **Clear Stun Feedback**: Stunned enemies retain predator silhouette with prominent rotating electric yellow/cyan stun arcs, wing lightning sparks, and paralyzed thruster.
+  - `[PASS]` **Arena 3D Depth & Presentation**: Added 10px isometric floating stage plinth along bottom perimeter edges, double-perimeter boundary inset line (4px inside), and center nexus platform tint.
+  - `[PASS]` **Mobile HUD & Pulse Button Readability**: Score font size 44, Timer font size 26, and enlarged PulseButton (150×150 px thumb target) with dynamic `PULSE\nREADY` vs `PULSE\n%.1fs`.
 - Device Deployment & Logcat Boot:
-  - Device: Motorola edge 70 (Qualcomm Adreno 722, Android 16)
+  - Target: Motorola edge 70 (`ZA223LWKNP`, Android 16)
+  - Replacement APK: `D:\Game\build\pulse_clash.apk` (24.63 MB, v1/v2/v3 signed)
   - Streamed Install: **Success**
-  - Launch Intent: `org.godotengine.pulseclash/com.godot.game.GodotApp`
+  - Launch Intent: `org.godotengine.pulseclash/com.godot.game.GodotApp` (injected via monkey)
   - Runtime Logcat: `OpenGL API OpenGL ES 3.2 Compatibility - Qualcomm Adreno (TM) 722` (0 crashes, 0 errors).
 
 ---
@@ -99,12 +99,13 @@
 
 | Test Category | Target Platform | Test Status | Notes |
 | :--- | :--- | :--- | :--- |
-| **Isometric Arena Visibility** | Android & PC | **Verified** | Z-index occlusion eliminated; 684×612 px diamond floor with checkerboard tiles and 3.5px/8px neon border |
-| **Touch Drag & Glide** | Motorola edge 70 | **Code Verified (Pending Founder Playtest)** | UI pass-through enabled (`mouse_filter=2`), affine canvas inverse mapping active, automated tests passed |
-| **Initial Grace Period** | Android & PC | **Verified** | 2.5s invulnerability shield; safe corner perimeter spawn prevents instant death |
-| **Entity Scale & Legibility** | Android & PC | **Verified** | ~2x scale for Player orb, crimson Chasers, and golden Shards |
-| **Mobile HUD & Pulse Button**| Motorola edge 70 | **Verified** | 140×140 thumb target; notch-safe top margins; dynamic text (READY vs %.1fs) |
-| **Game-Over & Restart Loop** | Android & PC | **Verified** | Clean stats card (Final, Best, Survived); clean restart without entity leaks |
+| **Isometric Arena Floor & 3D Depth** | Android & PC | **Verified** | 684×612 px diamond floor, 10px floating plinth, double neon perimeter |
+| **Touch-to-World Drag & Glide** | Motorola edge 70 | **Verified in Engine (Pending Founder Playtest)** | Dynamic viewport centering, release cancellation bug eliminated, affine inverse verified |
+| **Initial Grace Period & Balance** | Android & PC | **Verified** | 1 starting enemy, 2.0s shield, 2.0s spawn warmup, 105 px/s evadable pursuit |
+| **Collision Feedback & Death Burst** | Android & PC | **Verified** | Energy core explosion VFX, white-hot hit flash, camera screenshake on contact |
+| **Stun State Feedback** | Android & PC | **Verified** | Rotating electric stun arcs, spark nodes, paralyzed predator posture |
+| **Mobile HUD & Pulse Button**| Motorola edge 70 | **Verified** | Score size 44, Timer size 26, 150×150 px thumb target |
+| **Game-Over & Quick Restart** | Android & PC | **Verified** | Clean stats card (Final, Best, Survived); clean restart without entity leaks |
 | **Device Deployment & Boot**  | Motorola edge 70 | **Verified** | Installed via ADB (`Success`); clean OpenGL ES 3.2 initialization on Adreno 722 |
 
 

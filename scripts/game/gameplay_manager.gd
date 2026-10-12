@@ -12,21 +12,22 @@ signal enemies_updated(active_count: int, max_count: int)
 signal grace_period_tick(remaining: float)
 
 @export_group("Pulse Tuning")
-@export var pulse_stun_radius: float = 160.0
-@export var pulse_attract_radius: float = 210.0
-@export var pulse_stun_duration: float = 1.5
+@export var pulse_stun_radius: float = 180.0
+@export var pulse_attract_radius: float = 230.0
+@export var pulse_stun_duration: float = 1.8
 @export var pulse_cooldown: float = 5.0
 
 @export_group("Spawning Limits")
 @export var shard_count: int = 6
 @export var max_enemies: int = 8
-@export var initial_grace_period: float = 2.5
-@export var enemy_wave_interval: float = 9.0
+@export var initial_grace_period: float = 2.0
+@export var enemy_wave_interval: float = 14.0
 
 # Scene preloads
 const SHARD_SCENE: PackedScene = preload("res://scenes/entities/energy_shard.tscn")
 const ENEMY_SCENE: PackedScene = preload("res://scenes/entities/enemy.tscn")
 const SHOCKWAVE_SCENE: PackedScene = preload("res://scenes/entities/pulse_shockwave.tscn")
+const DEATH_BURST_SCENE: PackedScene = preload("res://scenes/entities/death_burst.tscn")
 
 var is_run_active: bool = false
 var survival_time: float = 0.0
@@ -63,7 +64,7 @@ func start_new_run() -> void:
 		player.set_invulnerable(true)
 
 	_spawn_initial_shards()
-	_spawn_enemy(true) # Initial enemy spawned far at perimeter corner
+	_spawn_enemy(true) # Initial enemy spawned at furthest perimeter corner with spawn warmup
 
 	run_started.emit()
 	pulse_cooldown_tick.emit(0.0, pulse_cooldown)
@@ -91,7 +92,7 @@ func _physics_process(delta: float) -> void:
 
 	survival_time += delta
 
-	# Grace Period Countdown
+	# Grace Period Countdown (2.0s initial protection)
 	if grace_time_remaining > 0.0:
 		grace_time_remaining = maxf(0.0, grace_time_remaining - delta)
 		grace_period_tick.emit(grace_time_remaining)
@@ -103,7 +104,7 @@ func _physics_process(delta: float) -> void:
 		pulse_cooldown_remaining = maxf(0.0, pulse_cooldown_remaining - delta)
 		pulse_cooldown_tick.emit(pulse_cooldown_remaining, pulse_cooldown)
 
-	# Dynamic Wave Progression
+	# Dynamic Wave Progression (Starting at 1 enemy, subsequent enemy after 14s)
 	_wave_timer += delta
 	if _wave_timer >= enemy_wave_interval and _enemies.size() < max_enemies:
 		_wave_timer = 0.0
@@ -183,9 +184,10 @@ func _spawn_enemy(initial: bool) -> void:
 	enemy.target_player = player
 	enemy.hit_player.connect(_on_enemy_hit_player)
 
-	# Fair starting speed (112 px/s) scaling smoothly with survival time
-	var speed_multiplier := 1.0 + minf(0.45, survival_time * 0.006)
-	enemy.base_speed = 112.0 * speed_multiplier
+	# Fair starting speed (105 px/s) scaling gently with survival time
+	var speed_multiplier := 1.0 + minf(0.40, survival_time * 0.005)
+	enemy.base_speed = 105.0 * speed_multiplier
+	enemy.acceleration = 380.0
 
 	var spawn_cell: Vector2i
 	if initial:
@@ -198,7 +200,11 @@ func _spawn_enemy(initial: bool) -> void:
 	_enemies.append(enemy)
 
 	if initial:
-		enemy.apply_stun(1.8)
+		# Initial enemy has warmup matching grace period (2.0s) at far perimeter corner
+		enemy.start_spawn_warmup(initial_grace_period)
+	else:
+		# Subsequent wave enemies telegraph for 1.2s before hunting
+		enemy.start_spawn_warmup(1.2)
 
 	enemies_updated.emit(_enemies.size(), max_enemies)
 
@@ -207,6 +213,19 @@ func _on_enemy_hit_player() -> void:
 	# Invulnerability protection during initial grace period
 	if player and player.is_invulnerable:
 		return
+	if not is_run_active:
+		return
+
+	# Collision Feedback: Spawn core detonation burst VFX and camera screenshake
+	if is_inside_tree() and player != null:
+		var burst: Node2D = DEATH_BURST_SCENE.instantiate()
+		burst.position = player.position
+		entities_container.add_child(burst)
+
+		var main_node := get_tree().root.find_child("Main", true, false)
+		if main_node and main_node.has_method("trigger_screenshake"):
+			main_node.trigger_screenshake(14.0)
+
 	end_run()
 
 
