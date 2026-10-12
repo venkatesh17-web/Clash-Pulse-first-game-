@@ -65,9 +65,12 @@
   - Scheme v2 (APK Signature Scheme v2): `true`
   - Scheme v3 (APK Signature Scheme v3): `true`
   - Signer: 1 (Debug keystore: `D:\Tools\AndroidSDK\debug.keystore`)
-- **ADB Physical Device Status:**
-  - `adb devices`: No physical devices currently attached/authorized.
-  - Device testing status: Physical on-device installation pending USB connection / side-loading. No device testing claimed.
+- **ADB Physical Device Status & Installation:**
+  - `adb devices`: Detected connected authorized physical device: `motorola edge 70` (`ZA223LWKNP`, Android 16).
+  - Installation Command: `adb install -r D:\Game\build\pulse_clash.apk`
+  - Installation Result: **Success** (`Performing Incremental Install`, `Performing Streamed Install` -> `Success`).
+  - Target Hardware: Motorola edge 70 (Android 16).
+  - Status: Debug APK successfully deployed and present in device app drawer as **Pulse Clash**.
 
 ---
 
@@ -81,5 +84,7 @@
 | **Procedural Audio Output** | Windows 11 PC | **Verified** | 16-bit PCM synth buffers play with zero latency |
 | **Screenshake Decay** | Windows 11 PC | **Verified** | Linear decay without viewport clipping |
 | **Android Export Build** | Android OS | **Verified** | Debug APK built, signed, aligned, and verified (23.48 MB) |
-| **Multi-touch Hardware** | Physical Android | **Pending** | Requires live Android phone deployment (no device connected via ADB) |
+| **Device Deployment** | Motorola edge 70 | **Verified** | Debug APK successfully installed on physical device via ADB (`Success`) |
+| **Multi-touch Gameplay** | Physical Android | **Ready for Playtest** | Installed on hardware; ready for live founder touch testing |
+
 

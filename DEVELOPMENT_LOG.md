@@ -69,7 +69,7 @@
 - Configured Android export preset in `export_presets.cfg` (`arm64-v8a`, Target SDK 34, Min SDK 21, package `org.godotengine.pulseclash`, immersive mode, vibration enabled, zero network permissions).
 - Successfully exported signed, aligned Android debug package (`D:\Game\build\pulse_clash.apk`, 23.48 MB).
 - Validated cryptographic signature with `apksigner` (v1, v2, v3 verified).
-- Queried ADB for physical target devices (`adb devices`: none currently attached).
+- Queried ADB and deployed to physical target hardware (`motorola edge 70`, Android 16) with `adb install -r D:\Game\build\pulse_clash.apk` (Result: `Success`).
 
 
 ### Milestone 011: Online Multiplayer Architecture
