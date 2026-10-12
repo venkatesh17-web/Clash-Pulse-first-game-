@@ -1,7 +1,7 @@
 class_name EnergyShardVisual
 extends Node2D
 
-## Procedural golden energy crystal visual
+## Procedural golden energy crystal visual with high mobile visibility
 
 var _time: float = 0.0
 
@@ -13,29 +13,29 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var pulse := sin(_time)
-	var glow_r := 13.0 + pulse * 1.5
+	var glow_r := 22.0 + pulse * 2.5
 
-	# Outer warm golden glow
-	draw_circle(Vector2.ZERO, glow_r, Color(1.0, 0.82, 0.1, 0.28))
+	# Outer warm golden glow bloom
+	draw_circle(Vector2.ZERO, glow_r, Color(1.0, 0.85, 0.15, 0.32))
 
-	# Outer diamond facet
+	# Outer diamond crystal facet (scaled ~2x)
 	var outer_diamond := PackedVector2Array([
-		Vector2(0, -10),
-		Vector2(7, 0),
-		Vector2(0, 10),
-		Vector2(-7, 0)
+		Vector2(0, -18),
+		Vector2(13, 0),
+		Vector2(0, 18),
+		Vector2(-13, 0)
 	])
-	draw_colored_polygon(outer_diamond, Color(0.95, 0.75, 0.05, 1.0))
-	draw_polyline(outer_diamond, Color(1.0, 0.95, 0.4, 1.0), 1.5, true)
+	draw_colored_polygon(outer_diamond, Color(0.96, 0.78, 0.06, 1.0))
+	draw_polyline(outer_diamond, Color(1.0, 0.96, 0.5, 1.0), 2.0, true)
 
 	# Inner crystal facet
 	var inner_diamond := PackedVector2Array([
-		Vector2(0, -6),
-		Vector2(4, 0),
-		Vector2(0, 6),
-		Vector2(-4, 0)
+		Vector2(0, -11),
+		Vector2(8, 0),
+		Vector2(0, 11),
+		Vector2(-8, 0)
 	])
-	draw_colored_polygon(inner_diamond, Color(1.0, 0.92, 0.4, 0.9))
+	draw_colored_polygon(inner_diamond, Color(1.0, 0.94, 0.5, 0.95))
 
-	# Core glint
-	draw_circle(Vector2(0, -1.5), 1.8, Color(1.0, 1.0, 1.0, 0.95))
+	# Core glint sparkle
+	draw_circle(Vector2(0, -2.5), 3.2, Color(1.0, 1.0, 1.0, 1.0))

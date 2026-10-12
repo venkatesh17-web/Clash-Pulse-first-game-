@@ -86,3 +86,14 @@
 ## Milestone 012: Final Delivery
 - [PAS] Project fully documented: README, DEVELOPMENT_LOG, TEST_REPORT, KNOWN_ISSUES
 - [PAS] Clean handoff ready for founder testing
+
+## Milestone 013: Visual & Gameplay Repair (Phone Screen Recording Recovery)
+- [PAS] Diagnose touch input swallowing bug and configure `mouse_filter = IGNORE` on non-interactive overlays
+- [PAS] Scale diamond arena dimensions to 76×38 px tiles with high-contrast checkerboard fills
+- [PAS] Dual-layer neon boundary, glowing corner vertices, and center pulse pad
+- [PAS] Scale player orb, chaser enemy, and golden shard visuals ~2× for mobile legibility
+- [PAS] Implement 2.5s initial grace period, safe corner spawn, and player shield invulnerability
+- [PAS] Enlarge Pulse button to 130×130 with high-contrast thumb-friendly READY/COOLDOWN states
+- [PAS] Polish Game-Over screen hierarchy, stats breakdown, and 270×64 restart buttons
+- [PAS] Automated verification passing across all suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`)
+- [PAS] Export, sign, and install repaired APK onto Motorola edge 70 via ADB

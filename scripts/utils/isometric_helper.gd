@@ -3,8 +3,8 @@ extends RefCounted
 
 ## Utility class for 2D Isometric projections (2:1 standard isometric ratio)
 
-const TILE_WIDTH: float = 64.0
-const TILE_HEIGHT: float = 32.0
+const TILE_WIDTH: float = 76.0
+const TILE_HEIGHT: float = 38.0
 
 
 ## Converts 2D cartesian grid coordinates into 2D isometric screen space coordinates

@@ -79,3 +79,29 @@
 ### Milestone 012: Handoff & Final Delivery
 - Maintained all documentation files in `D:\Game`.
 - Offline game is complete, playable, and validated.
+
+### Milestone 013: Visual & Gameplay Recovery (Phone Screen Recording Repair)
+- Root Cause Diagnosis:
+  - Discovered full-screen UI controls in `main.tscn` lacked `mouse_filter = IGNORE`, absorbing all touch drag input before `player.gd` could receive it.
+  - Identified arena size (576×288) occupied only 22% of portrait screen height and tile colors lacked contrast over black background.
+  - Identified instant death defect: initial enemy spawned ~150px from player at t=0 with 0 grace period, killing player in 1.1s.
+  - Entities (nucleus 6.5px, enemy 12px, shard 14px) were microscopic on high-DPI displays.
+- Visual & Arena Rebuild:
+  - Scaled tile dimensions from 64×32 to 76×38 px (684×342 px diamond footprint filling portrait center).
+  - Designed alternating checkerboard tile fills (`Color(0.065, 0.11, 0.22)` / `Color(0.045, 0.08, 0.16)`) with 1.8px electric cyan grid lines.
+  - Added dual-layer glowing neon perimeter (3.0px cyan edge + 6.0px soft bloom) and 4 corner vertex accents.
+- Gameplay & Survival Balance:
+  - Added 2.5s initial grace period with rotating shield visual and player invulnerability.
+  - Initial enemy spawned at furthest perimeter corner with grace delay and fair speed (112 px/s).
+  - Scaled entities ~2×: Player orb (11px nucleus, up to 34px glow), Chasers (22×14px, 26px bloom), Shards (28×18px).
+- Mobile Controls & HUD Polish:
+  - Set `mouse_filter = IGNORE` across all non-interactive containers; interactive buttons retain `STOP`.
+  - Transformed touch coordinates via `get_canvas_transform().affine_inverse() * event.position`.
+  - Enlarged Pulse button to 130×130 with high-contrast READY vs COOLDOWN states.
+  - Added safe-area top margins for camera punch-holes.
+  - Redesigned Game-Over screen with bold CORE CRITICAL typography, glowing stats card, and 270×64 touch buttons.
+- Verification & Device Deployment:
+  - Re-ran test suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`): all passed (exit code 0).
+  - Exported and signed new debug APK (`D:\Game\build\pulse_clash.apk`, 23.48 MB).
+  - Streamed install to Motorola edge 70 (`Success`) and launched app (`org.godotengine.pulseclash`).
+  - Verified clean OpenGL ES 3.2 Qualcomm Adreno 722 boot in device logcat.

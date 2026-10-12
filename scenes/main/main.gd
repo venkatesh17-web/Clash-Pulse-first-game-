@@ -58,6 +58,7 @@ func _ready() -> void:
 		gameplay_manager.run_ended.connect(_on_run_ended)
 		gameplay_manager.pulse_cooldown_tick.connect(_on_pulse_cooldown_tick)
 		gameplay_manager.enemies_updated.connect(_on_enemies_updated)
+		gameplay_manager.grace_period_tick.connect(_on_grace_period_tick)
 
 	# Automated CLI verification hooks
 	if OS.get_cmdline_user_args().has("--test-milestone-001") or OS.has_environment("TEST_MILESTONE_001"):
@@ -142,7 +143,7 @@ func _on_pulse_button_pressed() -> void:
 	if gameplay_manager:
 		var activated := gameplay_manager.activate_pulse()
 		if activated:
-			trigger_screenshake(6.0)
+			trigger_screenshake(7.0)
 			status_label.text = "Shockwave Activated!"
 
 
@@ -155,6 +156,13 @@ func _on_pulse_cooldown_tick(remaining: float, _total: float) -> void:
 		pulse_button.disabled = true
 		pulse_button.text = "%.1fs" % remaining
 		pulse_button.modulate = Color(0.65, 0.75, 0.85, 0.65)
+
+
+func _on_grace_period_tick(remaining: float) -> void:
+	if remaining > 0.0:
+		status_label.text = "SHIELD ACTIVE (%.1fs) • GLIDE TO MOVE" % remaining
+	elif GameManager.current_state == GameManager.State.PLAYING:
+		status_label.text = "Arena Active • Drag to Glide"
 
 
 func _on_enemies_updated(active: int, max_count: int) -> void:
@@ -225,9 +233,9 @@ func _run_milestone_002_test() -> void:
 	_on_start_button_pressed()
 	assert(GameManager.current_state == GameManager.State.PLAYING, "Game state must be PLAYING")
 
-	var valid_target := Vector2(80, 40)
+	var valid_target := Vector2(150, 75)
 	player.set_destination(valid_target)
-	for i in range(20):
+	for i in range(10):
 		player._physics_process(0.016)
 	assert(player.is_moving == true, "Player should be in motion")
 	assert(player.position.length() > 0.0, "Player should have moved away from center")
@@ -264,15 +272,17 @@ func _run_core_loop_test() -> void:
 
 	# 3. Pulse Activation & Enemy Stun
 	var enemy: Enemy = gameplay_manager._enemies[0]
-	enemy.position = player.position + Vector2(50, 0) # Within 140px stun radius
+	enemy.position = player.position + Vector2(50, 0) # Within stun radius
 	var pulse_ok := gameplay_manager.activate_pulse()
 	assert(pulse_ok == true, "Pulse activation should succeed")
-	assert(enemy.is_stunned == true, "Enemy within 140px must be stunned by Pulse")
+	assert(enemy.is_stunned == true, "Enemy within stun radius must be stunned by Pulse")
 	assert(gameplay_manager.pulse_cooldown_remaining > 0.0, "Pulse cooldown must be active")
 	assert(gameplay_manager.can_activate_pulse() == false, "Cannot re-pulse while cooldown active")
 	print("[PASS] Pulse ability triggered: Shockwave spawned, enemy stunned, cooldown active")
 
-	# 4. Enemy Contact & Game-Over Sequence
+	# 4. Enemy Contact & Game-Over Sequence (Grace period bypassed for test)
+	player.set_invulnerable(false)
+	gameplay_manager.grace_time_remaining = 0.0
 	enemy.is_stunned = false
 	enemy.hit_player.emit()
 	assert(gameplay_manager.is_run_active == false, "Enemy contact must end the run")

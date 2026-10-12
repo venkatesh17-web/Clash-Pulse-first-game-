@@ -37,7 +37,9 @@ func apply_stun(duration: float = 1.5) -> void:
 	is_stunned = true
 	stun_timer = duration
 	velocity = Vector2.ZERO
-	if visuals.has_method("set_stunned"):
+	if visuals == null:
+		visuals = get_node_or_null("Visuals")
+	if visuals and visuals.has_method("set_stunned"):
 		visuals.set_stunned(true)
 
 
