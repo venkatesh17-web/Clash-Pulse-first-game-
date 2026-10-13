@@ -11,6 +11,10 @@ const SoundSynthScript = preload("res://scripts/utils/sound_synth.gd")
 var _shard_sfx: AudioStreamWAV = null
 var _pulse_sfx: AudioStreamWAV = null
 var _game_over_sfx: AudioStreamWAV = null
+var _click_sfx: AudioStreamWAV = null
+var _stun_sfx: AudioStreamWAV = null
+var _beep_low_sfx: AudioStreamWAV = null
+var _beep_high_sfx: AudioStreamWAV = null
 
 
 func _ready() -> void:
@@ -25,6 +29,10 @@ func _ready() -> void:
 	_shard_sfx = SoundSynthScript.create_shard_chime()
 	_pulse_sfx = SoundSynthScript.create_pulse_sound()
 	_game_over_sfx = SoundSynthScript.create_game_over_sound()
+	_click_sfx = SoundSynthScript.create_ui_click_sound()
+	_stun_sfx = SoundSynthScript.create_stun_zap_sound()
+	_beep_low_sfx = SoundSynthScript.create_countdown_beep(false)
+	_beep_high_sfx = SoundSynthScript.create_countdown_beep(true)
 
 
 func play_shard_sound() -> void:
@@ -37,6 +45,18 @@ func play_pulse_sound() -> void:
 
 func play_game_over_sound() -> void:
 	play_sfx(_game_over_sfx, 1.0)
+
+
+func play_click_sound() -> void:
+	play_sfx(_click_sfx, 1.0)
+
+
+func play_stun_sound() -> void:
+	play_sfx(_stun_sfx, randf_range(0.95, 1.05))
+
+
+func play_countdown_beep(high: bool = false) -> void:
+	play_sfx(_beep_high_sfx if high else _beep_low_sfx, 1.0)
 
 
 func play_sfx(stream: AudioStream, pitch_scale: float = 1.0) -> void:

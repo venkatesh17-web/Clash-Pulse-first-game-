@@ -34,8 +34,20 @@ var high_score: int = 0:
 		high_score_updated.emit(high_score)
 		save_offline_data()
 
-var sound_enabled: bool = true
-var vibration_enabled: bool = true
+var sound_enabled: bool = true:
+	set(value):
+		sound_enabled = value
+		save_offline_data()
+
+var vibration_enabled: bool = true:
+	set(value):
+		vibration_enabled = value
+		save_offline_data()
+
+
+func toggle_sound() -> bool:
+	sound_enabled = not sound_enabled
+	return sound_enabled
 
 
 func _ready() -> void:

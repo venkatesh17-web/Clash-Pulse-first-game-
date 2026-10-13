@@ -52,12 +52,21 @@ func attract_to(player_node: Node2D) -> void:
 	_target_player = player_node
 
 
+const PICKUP_EFFECT_SCENE: PackedScene = preload("res://scenes/entities/shard_pickup_effect.tscn")
+
+
 func collect() -> void:
 	if is_collected:
 		return
 	is_collected = true
 	is_being_attracted = false
 	shard_collected.emit(self, score_value)
+
+	# Spawn golden spark burst and floating +10 score popup
+	if is_inside_tree() and get_parent() != null:
+		var effect: Node2D = PICKUP_EFFECT_SCENE.instantiate()
+		effect.position = position
+		get_parent().add_child(effect)
 
 	# Lightweight visual collection feedback
 	var tween := create_tween().set_parallel(true)

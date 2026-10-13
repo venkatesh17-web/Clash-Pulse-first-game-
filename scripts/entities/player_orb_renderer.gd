@@ -15,6 +15,15 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var pulse := sin(pulse_time)
+
+	# Layer 0: Floor contact shadow (anchors player in isometric 3D space)
+	var shadow_poly := PackedVector2Array([
+		Vector2(0, 12),
+		Vector2(16, 17),
+		Vector2(0, 22),
+		Vector2(-16, 17)
+	])
+	draw_colored_polygon(shadow_poly, Color(0.012, 0.03, 0.08, 0.65))
 	
 	# Invulnerability Shield Effect (during grace period)
 	if is_invulnerable:

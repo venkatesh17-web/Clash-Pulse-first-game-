@@ -15,6 +15,15 @@ func _draw() -> void:
 	var pulse := sin(_time)
 	var glow_r := 22.0 + pulse * 2.5
 
+	# Floor contact shadow (isometric perspective anchor)
+	var shadow_poly := PackedVector2Array([
+		Vector2(0, 14),
+		Vector2(11, 17),
+		Vector2(0, 20),
+		Vector2(-11, 17)
+	])
+	draw_colored_polygon(shadow_poly, Color(0.015, 0.03, 0.08, 0.6))
+
 	# Outer warm golden glow bloom
 	draw_circle(Vector2.ZERO, glow_r, Color(1.0, 0.85, 0.15, 0.32))
 

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://pulseclashshardeffect01"]
+
+[ext_resource type="Script" path="res://scripts/entities/shard_pickup_effect.gd" id="1_pickup"]
+
+[node name="ShardPickupEffect" type="Node2D"]
+z_index = 6
+script = ExtResource("1_pickup")

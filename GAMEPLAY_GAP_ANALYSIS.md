@@ -63,12 +63,13 @@
 
 ---
 
-## 2. Implementation Plan
+## 2. Implementation & Resolution Status
 
-1. **Arena Redesign (`arena.gd`, `isometric_helper.gd`):** Scale tile dimensions, enhance neon grid lines, alternating tiles, glowing perimeter.
-2. **Touch Input & UI Pass-Through (`main.tscn`, `main.gd`, `player.gd`):** Set `mouse_filter = IGNORE` on all non-interactive Controls. Refactor touch capture in `player.gd`.
-3. **Entity Visuals & Physics Scale (`player_orb_renderer.gd`, `player.tscn`, `enemy_visual.gd`, `enemy.tscn`, `energy_shard_visual.gd`, `energy_shard.tscn`):** Enlarge visuals and collision shapes ~2× for crisp mobile visibility.
-4. **Gameplay Tuning & Grace Period (`gameplay_manager.gd`, `player.gd`):** Add 2.5s grace period, invulnerability indicator, safe spawn distance, progressive wave timing.
-5. **HUD & Game-Over Polish (`main.tscn`, `main.gd`):** Enlarge Pulse button, enhance typography, polish Game-Over hierarchy.
-6. **Automated Verification:** Run Godot headless self-tests and test suite.
-7. **Export & Deploy:** Build debug APK, verify signatures, install to connected Motorola edge 70.
+1. **Arena Redesign (`arena.gd`, `isometric_helper.gd`):** [COMPLETED & VERIFIED] Scaled tile dimensions (76×38 px), high-contrast alternating midnight-navy tiles, 10px 3D isometric plinth, dual glowing neon perimeter.
+2. **Touch Input & UI Pass-Through (`main.tscn`, `main.gd`, `player.gd`):** [COMPLETED & VERIFIED] `mouse_filter = IGNORE` on all non-interactive overlays; dynamic viewport centering eliminates aspect ratio offsets; continuous touch glide maintained on finger release.
+3. **Entity Visuals & Physics Scale (`player_orb_renderer.gd`, `player.tscn`, `enemy_visual.gd`, `enemy.tscn`, `energy_shard_visual.gd`, `energy_shard.tscn`):** [COMPLETED & VERIFIED] Scaled visuals and collision shapes ~2×; grounded contact shadows beneath all entities; pickup burst sparks and +10 score popups.
+4. **Gameplay Tuning & Grace Period (`gameplay_manager.gd`, `player.gd`):** [COMPLETED & VERIFIED] 2.0s initial grace period with rotating orbital shield; initial enemy spawns >300px away with 2.0s materialization warmup; 1 starting enemy scaling up to max 8 enemies.
+5. **HUD & Game-Over Polish (`main.tscn`, `main.gd`):** [COMPLETED & VERIFIED] Enlarge Pulse button to 150×150 thumb target; 44pt score font; 26pt timer font; CORE CRITICAL stats breakdown card with quick restart.
+6. **Sound Suite & Immersion:** [COMPLETED & VERIFIED] Zero-asset 16-bit PCM procedural audio (6 SFX); sound mute toggle with local JSON persistence; 3-2-1 countdown sequence; atmospheric void starfield with drifting energy motes.
+7. **Automated Verification:** [COMPLETED & VERIFIED] All 5 test suites (`--test-milestone-001/002/013`, `--test-core-loop`, `--test-master-qa`) exit with code 0.
+8. **Export & Deploy:** [COMPLETED & VERIFIED] Debug APK exported and signed (v1/v2/v3) at `D:\Game\build\pulse_clash.apk` (24.65 MB).

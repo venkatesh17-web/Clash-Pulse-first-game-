@@ -31,6 +31,8 @@
 | **007** | Game Loop & UI | Start menu, Game-Over, restart, HUD, timer, high scores | **Completed** |
 | **008** | Game Feel & Polish | Screenshake, procedural audio SFX, particle shockwaves | **Completed** |
 | **009** | Offline QA Suite | Comprehensive headless verification suite | **Completed** |
-| **010** | Android Readiness | Audit Android SDK/build tools, manifest & export config | **Audited (Action Req.)** |
+| **010** | Android Readiness | Android SDK tools, debug keystore, export template, APK build | **Completed** |
 | **011** | Multiplayer Architecture | Technical design document, state sync, local prototype | **Documented** |
 | **012** | Final Delivery | Comprehensive README, play instructions, handoff report | **Completed** |
+| **013** | Visual & Gameplay Repair | Phone recording recovery, arena contrast, touch input, grace period | **Completed** |
+| **014** | Master Production Polish | Procedural audio suite, contact shadows, shard bursts, void space, Master QA | **Completed** |

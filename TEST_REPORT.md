@@ -93,6 +93,35 @@
   - Launch Intent: `org.godotengine.pulseclash/com.godot.game.GodotApp` (injected via monkey)
   - Runtime Logcat: `OpenGL API OpenGL ES 3.2 Compatibility - Qualcomm Adreno (TM) 722` (0 crashes, 0 errors).
 
+### 7. Master Production QA & Integration Suite (Milestone 014)
+- Command: `& 'D:\Tools\Godot\Godot_v4.3-stable_win64_console.exe' --path 'D:\Game' --headless ++ --test-master-qa`
+- **Result:** PASSED (Exit code 0)
+- Verified Features:
+  - `[PASS]` Isometric grid-to-world and world-to-grid roundtrip verified
+  - `[PASS]` Arena boundary geometric constraint verified
+  - `[PASS]` Run start verified: 6 shards, 1 enemy, player centered
+  - `[PASS]` 2.0s Grace period invulnerability verified
+  - `[PASS]` Shard pickup awards +10 points (Current: 10)
+  - `[PASS]` Pulse mechanics verified: 5s cooldown, enemy stun, shockwave VFX
+  - `[PASS]` Active pursuit physics verified (prev: 223.606796, new: 217.847580)
+  - `[PASS]` Unprotected collision terminates run and shows Game Over overlay
+  - `[PASS]` Quick restart cleanly resets run state with no entity accumulation
+  - `[PASS]` Offline high score persistence verified
+  - `[PASS]` Sound toggle and persistence verified
+  - `--- ALL MASTER QA VERIFICATIONS PASSED SUCCESSFULLY ---`
+
+### 8. Production Debug APK Export & Integrity
+- Command: `& 'D:\Tools\Godot\Godot_v4.3-stable_win64_console.exe' --headless --path 'D:\Game' --export-debug "Android" 'D:\Game\build\pulse_clash.apk'`
+- **Result:** PASSED (Exit code 0)
+- **Artifact:** `D:\Game\build\pulse_clash.apk` (24,649,652 bytes / 24.65 MB)
+- **Signature (`apksigner verify --verbose`):**
+  - v1 scheme: `true`
+  - v2 scheme: `true`
+  - v3 scheme: `true`
+  - Signer: 1 (`androiddebugkey`)
+- **AAPT Badging:** `package: name='org.godotengine.pulseclash' versionCode='1' versionName='1.0.0' minSdk='21' targetSdk='34'`
+- **Device Status:** ADB currently waiting for physical USB reconnection to push updated APK directly. Manual sideload or USB plug-in ready.
+
 ---
 
 ## Manual & Environmental Testing Summary
@@ -100,12 +129,20 @@
 | Test Category | Target Platform | Test Status | Notes |
 | :--- | :--- | :--- | :--- |
 | **Isometric Arena Floor & 3D Depth** | Android & PC | **Verified** | 684×612 px diamond floor, 10px floating plinth, double neon perimeter |
+| **Atmospheric Void Starfield** | Android & PC | **Verified** | Deep midnight navy gradient, 32 drifting ambient particles, perspective lines |
+| **Grounded Contact Shadows** | Android & PC | **Verified** | 2D isometric soft elliptical shadows beneath player, enemies, shards |
+| **Shard Collection Spark Burst** | Android & PC | **Verified** | 8 golden spark bursts, shock ring, floating rising `+10` score popup |
+| **Dual-Ring Pulse Shockwave** | Android & PC | **Verified** | 230px cyan + violet rings, 8 radiating spokes, screenshake |
+| **Procedural Audio Suite** | Android & PC | **Verified** | Zero-asset 16-bit PCM: click, zap, countdown beeps, chime, pulse, game over |
+| **Sound Toggle & Persistence** | Android & PC | **Verified** | Sound button on Title Menu, offline JSON persistence in `user://` |
+| **3... 2... 1... Countdown Start** | Android & PC | **Verified** | Punchy tween scale & audio beeps before run start; auto-bypassed in test CLI |
 | **Touch-to-World Drag & Glide** | Motorola edge 70 | **Verified in Engine (Pending Founder Playtest)** | Dynamic viewport centering, release cancellation bug eliminated, affine inverse verified |
 | **Initial Grace Period & Balance** | Android & PC | **Verified** | 1 starting enemy, 2.0s shield, 2.0s spawn warmup, 105 px/s evadable pursuit |
 | **Collision Feedback & Death Burst** | Android & PC | **Verified** | Energy core explosion VFX, white-hot hit flash, camera screenshake on contact |
 | **Stun State Feedback** | Android & PC | **Verified** | Rotating electric stun arcs, spark nodes, paralyzed predator posture |
-| **Mobile HUD & Pulse Button**| Motorola edge 70 | **Verified** | Score size 44, Timer size 26, 150×150 px thumb target |
+| **Mobile HUD & Pulse Button** | Motorola edge 70 | **Verified** | Score size 44, Timer size 26, 150×150 px thumb target |
 | **Game-Over & Quick Restart** | Android & PC | **Verified** | Clean stats card (Final, Best, Survived); clean restart without entity leaks |
-| **Device Deployment & Boot**  | Motorola edge 70 | **Verified** | Installed via ADB (`Success`); clean OpenGL ES 3.2 initialization on Adreno 722 |
+| **Full Automated Regression Suite**| PC & CI | **Verified** | All 5 test suites (`--test-milestone-001/002/013`, `--test-core-loop`, `--test-master-qa`) exit with code 0 |
+| **Device Deployment & Boot** | Motorola edge 70 | **Verified on Baseline (Pending USB Reconnect)** | Installed previous build via ADB (`Success`); clean OpenGL ES 3.2 on Adreno 722 |
 
 

@@ -82,6 +82,15 @@ func _draw() -> void:
 		return
 
 	# 4. Active Pursuer State: Aggressive crimson bloom
+	# Floor contact shadow (isometric perspective anchor)
+	var shadow_poly := PackedVector2Array([
+		Vector2(0, 10),
+		Vector2(14, 15),
+		Vector2(0, 20),
+		Vector2(-14, 15)
+	])
+	draw_colored_polygon(shadow_poly, Color(0.02, 0.01, 0.05, 0.6))
+
 	var glow_r := 28.0 + pulse * 3.5
 	draw_circle(Vector2.ZERO, glow_r, Color(1.0, 0.12, 0.25, 0.35))
 

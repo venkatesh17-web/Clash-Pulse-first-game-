@@ -94,3 +94,39 @@
   - Exported and signed replacement Android debug APK (`D:\Game\build\pulse_clash.apk`, 24.63 MB, v1/v2/v3 verified).
   - Streamed install to Motorola edge 70 (`Success`) via ADB.
   - Launched app via monkey intent; logcat confirms clean initialization on Qualcomm Adreno 722.
+
+### Milestone 014: Master Game Creation Directive (Production Polish, Audio Suite, & QA)
+- **Atmospheric Void Background (`scripts/ui/background_stars.gd`):**
+  - Implemented vertical void background with deep midnight-navy linear gradient (`#06080F` to `#0A111F`).
+  - Added 32 floating ambient energy particles with sinusoidal pulsation, gentle vertical drifting, and subtle vanishing perspective lines anchoring the isometric world in deep space.
+- **Isometric Grounded Shadows:**
+  - Added semi-transparent 2D isometric contact shadows (`Color(0.0, 0.0, 0.0, 0.35 - 0.45)`) beneath:
+    - Player orb (`scripts/entities/player_orb_renderer.gd`): dynamic ellipse matching squish/stretch state.
+    - Enemies (`scripts/entities/enemy_visual.gd`): red-tinted contact shadow.
+    - Energy shards (`scripts/entities/energy_shard_visual.gd`): ground shadow that breathes with floating bob.
+- **Shard Pickup Burst Effect & Popup (`scenes/entities/shard_pickup_effect.tscn`):**
+  - Integrated 8 radial golden spark motes, expanding shock ring, and floating, rising, fading `+10` score popup label upon collection.
+- **Dual-Ring Pulse Shockwave Upgrade (`scripts/entities/pulse_shockwave.gd`):**
+  - Dual concentric rings (electric cyan 230px, violet 180px) with 8 radiating energy spokes and rotational impulse.
+- **Zero-Asset Procedural Audio Suite (`scripts/utils/sound_synth.gd` & `scripts/autoload/audio_manager.gd`):**
+  - 100% RAM-synthesized 16-bit PCM procedural audio for zero asset footprint.
+  - Added UI click chirps, electric stun zap buzz, low and high pitch countdown beeps, alongside gem chime, pulse hum, and game-over crunch.
+  - Added audio mute toggle button (`SoundButton`) to Title Menu with JSON save/load persistence in `user://pulse_clash_save.json`.
+- **Countdown Start Flow:**
+  - Added 3... 2... 1... ENGAGE! visual countdown overlay with punchy scale and fade tweens and audio beeps before run start. Automated test suites bypass this countdown delay cleanly.
+- **Master Automated QA Suite (`scenes/main/main.gd` `--test-master-qa`):**
+  - Built comprehensive 11-step integration test:
+    1. Isometric grid <-> world roundtrip conversion
+    2. Arena diamond boundary clamping
+    3. Run start: 6 shards, 1 enemy, player centered
+    4. 2.0s grace period invulnerability
+    5. Shard collection (+10 score)
+    6. Pulse 5s cooldown, stun, shockwave VFX
+    7. Active enemy pursuit physics
+    8. Unprotected collision & Game Over transition
+    9. Quick restart clean state reset
+    10. Offline high score JSON persistence
+    11. Sound toggle preference JSON persistence
+  - All automated test suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`, `--test-milestone-013`, `--test-master-qa`) exit with code 0.
+- **Android Production Debug Export:**
+  - Re-exported and signed `D:\Game\build\pulse_clash.apk` (24.65 MB, v1/v2/v3 verified, targetSdk 34, minSdk 21).

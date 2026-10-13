@@ -95,5 +95,16 @@
 - [PAS] Implement 2.5s initial grace period, safe corner spawn, and player shield invulnerability
 - [PAS] Enlarge Pulse button to 130×130 with high-contrast thumb-friendly READY/COOLDOWN states
 - [PAS] Polish Game-Over screen hierarchy, stats breakdown, and 270×64 restart buttons
-- [PAS] Automated verification passing across all suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`)
+- [PAS] Automated verification passing across all suites (`--test-milestone-001`, `--test-milestone-002`, `--test-core-loop`, `--test-milestone-013`)
 - [PAS] Export, sign, and install repaired APK onto Motorola edge 70 via ADB
+
+## Milestone 014: Master Game Creation Directive (Production Polish & QA)
+- [PAS] Atmospheric Void Background (`background_stars.gd`): deep midnight navy gradient, 32 drifting energy motes, vanishing perspective lines
+- [PAS] Grounded 2D Isometric Contact Shadows: soft elliptical ambient occlusion beneath player, enemies, and floating energy shards
+- [PAS] Shard Collection Juice (`shard_pickup_effect.tscn`): 8 radial golden spark motes, expanding ring, and floating "+10" score popup
+- [PAS] Dual-Ring Pulse Shockwave: concentric 230px cyan and violet shockwave rings, 8 radiating spokes, and dynamic screen shake
+- [PAS] Procedural 16-bit PCM Audio Suite (`sound_synth.gd`): synthesized UI clicks, electric stun zaps, chime, pulse, game over, and countdown beeps
+- [PAS] Audio Preference & JSON Persistence: Sound toggle button on TitleMenu persisting to `user://pulse_clash_save.json`
+- [PAS] Countdown Start Transition: 3... 2... 1... ENGAGE! punchy scale/fade tween with SFX beeps and automated test bypass
+- [PAS] Master Automated QA Suite (`--test-master-qa`): 11 end-to-end integration verifications passing with exit code 0
+- [PAS] Android Production Debug APK exported, signed (v1/v2/v3), and verified at `D:\Game\build\pulse_clash.apk` (24.65 MB)

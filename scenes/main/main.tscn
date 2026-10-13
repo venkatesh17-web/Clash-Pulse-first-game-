@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://pulseclashmain01"]
+[gd_scene load_steps=6 format=3 uid="uid://pulseclashmain01"]
 
 [ext_resource type="Script" path="res://scenes/main/main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://pulseclasharena01" path="res://scenes/game/arena.tscn" id="2_arena"]
 [ext_resource type="PackedScene" uid="uid://pulseclashplayer01" path="res://scenes/entities/player.tscn" id="3_player"]
 [ext_resource type="Script" path="res://scripts/game/gameplay_manager.gd" id="4_gameplay"]
+[ext_resource type="Script" path="res://scripts/ui/background_stars.gd" id="5_bg"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -26,6 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0.035, 0.045, 0.075, 1)
+script = ExtResource("5_bg")
 
 [node name="IsometricWorldPlaceholder" type="Node2D" parent="."]
 y_sort_enabled = true
@@ -116,6 +118,15 @@ mouse_filter = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 26
 text = "TAP TO START"
+
+[node name="SoundButton" type="Button" parent="UI/TitleMenu"]
+custom_minimum_size = Vector2(200, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 0
+theme_override_colors/font_color = Color(0.7, 0.88, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "SOUND: ON"
 
 [node name="InGameHUD" type="Control" parent="UI"]
 visible = false
@@ -312,5 +323,37 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(0.7, 0.85, 1, 0.9)
 theme_override_font_sizes/font_size = 17
 text = "Offline-First • 60 FPS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CountdownOverlay" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CountdownLabel" type="Label" parent="UI/CountdownOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -90.0
+offset_right = 220.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.1, 0.96, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0.4, 0.8, 0.8)
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 80
+text = "3"
 horizontal_alignment = 1
 vertical_alignment = 1
